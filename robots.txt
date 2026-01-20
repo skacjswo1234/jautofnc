@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /login.html
+Disallow: /functions/
+
+Sitemap: https://jautofnc.com/sitemap.xml
