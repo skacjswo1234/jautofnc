@@ -1,17 +1,25 @@
 // API 기본 URL
 const API_BASE = '/api/inquiries';
 
-// 현재 선택된 상태 (항상 전체)
-let currentStatus = 'all';
+// 페이징 설정
+const ITEMS_PER_PAGE = 100;
+let currentPage = 1;
+let totalItems = 0;
+let allInquiries = [];
 
 // DOM 요소
 const sidebar = document.getElementById('sidebar');
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileOverlay = document.getElementById('mobileOverlay');
 const inquiriesList = document.getElementById('inquiriesList');
+const inquiriesTable = document.getElementById('inquiriesTable');
 const loading = document.getElementById('loading');
 const refreshBtn = document.getElementById('refreshBtn');
 const contentTitle = document.getElementById('contentTitle');
+const pagination = document.getElementById('pagination');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pageInfo = document.getElementById('pageInfo');
 
 // 상태별 제목 매핑
 const statusTitles = {
@@ -23,6 +31,12 @@ const statusTitles = {
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
+    // 로그인 체크
+    if (!localStorage.getItem('admin_logged_in')) {
+        window.location.href = '/login.html';
+        return;
+    }
+    
     initEventListeners();
     loadInquiries('all');
     contentTitle.textContent = '문의 리스트';
@@ -38,8 +52,36 @@ function initEventListeners() {
 
     // 새로고침 버튼
     refreshBtn.addEventListener('click', () => {
+        currentPage = 1;
         loadInquiries('all');
     });
+
+    // 페이징 버튼
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayPage();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayPage();
+        }
+    });
+
+    // 로그아웃 버튼
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('admin_logged_in');
+                window.location.href = '/login.html';
+            }
+        });
+    }
 }
 
 // 모바일 메뉴 토글
@@ -69,7 +111,10 @@ async function loadInquiries(status = 'all') {
         const result = await response.json();
         
         if (result.success) {
-            displayInquiries(result.data);
+            allInquiries = result.data || [];
+            totalItems = allInquiries.length;
+            currentPage = 1;
+            displayPage();
         } else {
             showError('문의 목록을 불러오는데 실패했습니다.');
         }
@@ -81,22 +126,131 @@ async function loadInquiries(status = 'all') {
     }
 }
 
-// 문의 목록 표시
+// 현재 페이지 표시
+function displayPage() {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const pageData = allInquiries.slice(startIndex, endIndex);
+    
+    displayInquiries(pageData);
+    updatePagination();
+}
+
+// 페이징 정보 업데이트
+function updatePagination() {
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    
+    if (totalItems === 0) {
+        pagination.style.display = 'none';
+        return;
+    }
+    
+    pagination.style.display = 'flex';
+    pageInfo.textContent = `${currentPage} / ${totalPages} (총 ${totalItems}건)`;
+    
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+}
+
+// 문의 목록 표시 (테이블 형식)
 function displayInquiries(inquiries) {
-    if (inquiries.length === 0) {
+    if (inquiries.length === 0 && totalItems === 0) {
+        inquiriesTable.style.display = 'none';
+        pagination.style.display = 'none';
         inquiriesList.innerHTML = `
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 12h6m-3-3v6m-9 1V8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                </svg>
-                <h3>문의가 없습니다</h3>
-                <p>새로운 문의가 등록되면 여기에 표시됩니다.</p>
-            </div>
+            <tr>
+                <td colspan="11" style="text-align: center; padding: 60px 20px; color: #999;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5">
+                            <path d="M9 12h6m-3-3v6m-9 1V8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        <div>
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">문의가 없습니다</h3>
+                            <p style="font-size: 14px;">새로운 문의가 등록되면 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+                </td>
+            </tr>
         `;
+        inquiriesTable.style.display = 'table';
         return;
     }
 
-    inquiriesList.innerHTML = inquiries.map(inquiry => `
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    
+    inquiriesList.innerHTML = inquiries.map((inquiry, index) => `
+        <tr data-id="${inquiry.id}" data-original-memo="${escapeHtml(inquiry.memo || '')}">
+            <td>${startIndex + index + 1}</td>
+            <td>${escapeHtml(inquiry.name)}</td>
+            <td>${escapeHtml(inquiry.phone1)}-${escapeHtml(inquiry.phone2)}-${escapeHtml(inquiry.phone3)}</td>
+            <td>${escapeHtml(inquiry.car_name || '-')}</td>
+            <td>${escapeHtml(inquiry.rent_type)}</td>
+            <td>${escapeHtml(inquiry.months)}</td>
+            <td>${escapeHtml(inquiry.business_type)}</td>
+            <td>
+                <span class="inquiry-status ${inquiry.status}">${getStatusText(inquiry.status)}</span>
+            </td>
+            <td>${formatDate(inquiry.created_at)}</td>
+            <td>
+                <div class="table-memo-cell">
+                    <div class="memo-display" id="memo-display-${inquiry.id}">
+                        ${inquiry.memo ? escapeHtml(inquiry.memo).substring(0, 30) + (inquiry.memo.length > 30 ? '...' : '') : '<span class="memo-placeholder">-</span>'}
+                    </div>
+                    <button class="memo-edit-btn-small" onclick="toggleMemoEdit(${inquiry.id})" title="메모 편집">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+            <td>
+                <div class="table-actions">
+                    <select class="status-select-small" onchange="updateStatus(${inquiry.id}, this.value)">
+                        <option value="pending" ${inquiry.status === 'pending' ? 'selected' : ''}>대기중</option>
+                        <option value="contacted" ${inquiry.status === 'contacted' ? 'selected' : ''}>연락완료</option>
+                        <option value="completed" ${inquiry.status === 'completed' ? 'selected' : ''}>처리완료</option>
+                    </select>
+                    <button class="delete-btn-small" onclick="deleteInquiry(${inquiry.id})" title="삭제">삭제</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    inquiriesTable.style.display = 'table';
+    
+    // 메모 편집 모달 추가
+    addMemoModals(inquiries);
+}
+
+// 메모 편집 모달 추가
+function addMemoModals(inquiries) {
+    const existingModals = document.querySelectorAll('.memo-modal');
+    existingModals.forEach(modal => modal.remove());
+    
+    inquiries.forEach(inquiry => {
+        const modal = document.createElement('div');
+        modal.className = 'memo-modal';
+        modal.id = `memo-modal-${inquiry.id}`;
+        modal.style.display = 'none';
+        modal.innerHTML = `
+            <div class="memo-modal-content">
+                <div class="memo-modal-header">
+                    <h3>메모 편집</h3>
+                    <button class="memo-modal-close" onclick="closeMemoModal(${inquiry.id})">&times;</button>
+                </div>
+                <div class="memo-modal-body">
+                    <textarea class="memo-textarea" id="memo-textarea-${inquiry.id}" placeholder="메모를 입력하세요.">${escapeHtml(inquiry.memo || '')}</textarea>
+                </div>
+                <div class="memo-modal-footer">
+                    <button class="memo-save-btn" onclick="saveMemo(${inquiry.id})">저장</button>
+                    <button class="memo-cancel-btn" onclick="closeMemoModal(${inquiry.id})">취소</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    });
+}
         <div class="inquiry-card" data-id="${inquiry.id}" data-original-memo="${escapeHtml(inquiry.memo || '')}">
             <div class="inquiry-header">
                 <div class="inquiry-info">
@@ -256,53 +410,34 @@ async function deleteInquiry(id) {
     }
 }
 
-// 메모 편집 모드 토글
+// 메모 편집 모드 토글 (모달 열기)
 function toggleMemoEdit(id) {
-    const displayEl = document.getElementById(`memo-display-${id}`);
-    const editEl = document.getElementById(`memo-edit-${id}`);
-    const textarea = document.getElementById(`memo-textarea-${id}`);
-    
-    if (!displayEl || !editEl || !textarea) {
-        console.error('Memo elements not found for id:', id);
-        return;
-    }
-    
-    // 원본 메모 저장
-    const card = document.querySelector(`.inquiry-card[data-id="${id}"]`);
-    if (card && !card.dataset.originalMemo) {
-        card.dataset.originalMemo = textarea.value;
-    }
-    
-    if (editEl.style.display === 'none' || editEl.style.display === '') {
-        displayEl.style.display = 'none';
-        editEl.style.display = 'block';
-        textarea.focus();
-    } else {
-        displayEl.style.display = 'block';
-        editEl.style.display = 'none';
+    const modal = document.getElementById(`memo-modal-${id}`);
+    if (modal) {
+        modal.style.display = 'flex';
+        const textarea = document.getElementById(`memo-textarea-${id}`);
+        if (textarea) {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (row && !row.dataset.originalMemo) {
+                row.dataset.originalMemo = textarea.value;
+            }
+            textarea.focus();
+        }
     }
 }
 
-// 메모 편집 취소
-function cancelMemoEdit(id) {
-    const displayEl = document.getElementById(`memo-display-${id}`);
-    const editEl = document.getElementById(`memo-edit-${id}`);
-    const textarea = document.getElementById(`memo-textarea-${id}`);
-    
-    if (!displayEl || !editEl || !textarea) {
-        console.error('Memo elements not found for id:', id);
-        return;
+// 메모 모달 닫기
+function closeMemoModal(id) {
+    const modal = document.getElementById(`memo-modal-${id}`);
+    if (modal) {
+        const textarea = document.getElementById(`memo-textarea-${id}`);
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        if (row && textarea) {
+            const originalMemo = row.dataset.originalMemo || '';
+            textarea.value = originalMemo;
+        }
+        modal.style.display = 'none';
     }
-    
-    // 원래 값으로 복원 (카드에서 데이터 가져오기)
-    const card = document.querySelector(`.inquiry-card[data-id="${id}"]`);
-    if (card) {
-        const originalMemo = card.dataset.originalMemo || '';
-        textarea.value = originalMemo;
-    }
-    
-    displayEl.style.display = 'block';
-    editEl.style.display = 'none';
 }
 
 // 메모 저장
@@ -329,27 +464,29 @@ async function saveMemo(id) {
         if (result.success) {
             // 메모 표시 업데이트
             const displayEl = document.getElementById(`memo-display-${id}`);
-            const editEl = document.getElementById(`memo-edit-${id}`);
+            const row = document.querySelector(`tr[data-id="${id}"]`);
             
-            if (!displayEl || !editEl) {
-                console.error('Display or edit element not found for id:', id);
-                return;
-            }
-            
-            if (memo) {
-                displayEl.innerHTML = escapeHtml(memo).replace(/\n/g, '<br>');
-            } else {
-                displayEl.innerHTML = '<span class="memo-placeholder">메모를 입력하세요.</span>';
+            if (displayEl) {
+                if (memo) {
+                    displayEl.innerHTML = escapeHtml(memo).substring(0, 30) + (memo.length > 30 ? '...' : '');
+                } else {
+                    displayEl.innerHTML = '<span class="memo-placeholder">-</span>';
+                }
             }
             
             // 원본 메모 저장
-            const card = document.querySelector(`.inquiry-card[data-id="${id}"]`);
-            if (card) {
-                card.dataset.originalMemo = memo;
+            if (row) {
+                row.dataset.originalMemo = memo;
             }
             
-            displayEl.style.display = 'block';
-            editEl.style.display = 'none';
+            // 전체 데이터 업데이트
+            const inquiryIndex = allInquiries.findIndex(inq => inq.id === id);
+            if (inquiryIndex !== -1) {
+                allInquiries[inquiryIndex].memo = memo;
+            }
+            
+            // 모달 닫기
+            closeMemoModal(id);
         } else {
             alert('메모 저장에 실패했습니다: ' + result.error);
         }
@@ -361,29 +498,33 @@ async function saveMemo(id) {
 
 // 로딩 표시
 function showLoading() {
-    loading.classList.remove('hidden');
-    inquiriesList.innerHTML = '';
-    inquiriesList.appendChild(loading);
+    loading.style.display = 'flex';
+    inquiriesTable.style.display = 'none';
+    pagination.style.display = 'none';
 }
 
 // 로딩 숨김
 function hideLoading() {
-    loading.classList.add('hidden');
+    loading.style.display = 'none';
 }
 
 // 에러 표시
 function showError(message) {
+    inquiriesTable.style.display = 'table';
     inquiriesList.innerHTML = `
-        <div class="empty-state">
-            <h3>오류 발생</h3>
-            <p>${escapeHtml(message)}</p>
-        </div>
+        <tr>
+            <td colspan="11" style="text-align: center; padding: 40px 20px; color: #ff4444;">
+                <h3>오류 발생</h3>
+                <p>${escapeHtml(message)}</p>
+            </td>
+        </tr>
     `;
+    pagination.style.display = 'none';
 }
 
 // 전역 함수로 export (HTML에서 직접 호출하기 위해)
 window.updateStatus = updateStatus;
 window.deleteInquiry = deleteInquiry;
 window.toggleMemoEdit = toggleMemoEdit;
-window.cancelMemoEdit = cancelMemoEdit;
+window.closeMemoModal = closeMemoModal;
 window.saveMemo = saveMemo;
