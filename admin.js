@@ -178,26 +178,22 @@ function displayInquiries(inquiries) {
             </td>
             <td>${formatDate(inquiry.created_at)}</td>
             <td>
-                <div class="table-memo-cell">
-                    <div class="memo-display" id="memo-display-${inquiry.id}">
-                        ${inquiry.memo ? escapeHtml(inquiry.memo).substring(0, 30) + (inquiry.memo.length > 30 ? '...' : '') : '<span class="memo-placeholder">-</span>'}
-                    </div>
-                    <button class="memo-edit-btn-small" onclick="toggleMemoEdit(${inquiry.id})" title="메모 편집">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </button>
-                </div>
+                <button class="memo-btn" onclick="toggleMemoEdit(${inquiry.id})" title="메모">
+                    ${inquiry.memo ? '<span class="memo-has-text">📝</span>' : '<span class="memo-empty">+</span>'}
+                </button>
             </td>
             <td>
-                <div class="table-actions">
-                    <select class="status-select-small" onchange="updateStatus(${inquiry.id}, this.value)">
-                        <option value="pending" ${inquiry.status === 'pending' ? 'selected' : ''}>대기중</option>
-                        <option value="contacted" ${inquiry.status === 'contacted' ? 'selected' : ''}>연락완료</option>
-                        <option value="completed" ${inquiry.status === 'completed' ? 'selected' : ''}>처리완료</option>
-                    </select>
-                    <button class="delete-btn-small" onclick="deleteInquiry(${inquiry.id})" title="삭제">삭제</button>
+                <div class="table-actions-modern">
+                    <div class="status-chips">
+                        <button class="status-chip ${inquiry.status === 'pending' ? 'active' : ''}" data-status="pending" onclick="updateStatus(${inquiry.id}, 'pending')">대기</button>
+                        <button class="status-chip ${inquiry.status === 'contacted' ? 'active' : ''}" data-status="contacted" onclick="updateStatus(${inquiry.id}, 'contacted')">연락</button>
+                        <button class="status-chip ${inquiry.status === 'completed' ? 'active' : ''}" data-status="completed" onclick="updateStatus(${inquiry.id}, 'completed')">완료</button>
+                    </div>
+                    <button class="delete-btn-modern" onclick="deleteInquiry(${inquiry.id})" title="삭제">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
                 </div>
             </td>
         </tr>
@@ -385,28 +381,14 @@ async function saveMemo(id) {
         const result = await response.json();
 
         if (result.success) {
-            // 메모 표시 업데이트
-            const displayEl = document.getElementById(`memo-display-${id}`);
-            const row = document.querySelector(`tr[data-id="${id}"]`);
-            
-            if (displayEl) {
-                if (memo) {
-                    displayEl.innerHTML = escapeHtml(memo).substring(0, 30) + (memo.length > 30 ? '...' : '');
-                } else {
-                    displayEl.innerHTML = '<span class="memo-placeholder">-</span>';
-                }
-            }
-            
-            // 원본 메모 저장
-            if (row) {
-                row.dataset.originalMemo = memo;
-            }
-            
             // 전체 데이터 업데이트
             const inquiryIndex = allInquiries.findIndex(inq => inq.id === id);
             if (inquiryIndex !== -1) {
                 allInquiries[inquiryIndex].memo = memo;
             }
+            
+            // 현재 페이지 다시 표시
+            displayPage();
             
             // 모달 닫기
             closeMemoModal(id);
