@@ -5,10 +5,14 @@ const API_BASE = '/api/inquiries';
 let currentStatus = 'all';
 
 // DOM 요소
+const sidebar = document.getElementById('sidebar');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileOverlay = document.getElementById('mobileOverlay');
+const navItems = document.querySelectorAll('.nav-item');
 const inquiriesList = document.getElementById('inquiriesList');
 const loading = document.getElementById('loading');
 const refreshBtn = document.getElementById('refreshBtn');
-const statusFilter = document.getElementById('statusFilter');
+const contentTitle = document.getElementById('contentTitle');
 
 // 상태별 제목 매핑
 const statusTitles = {
@@ -26,15 +30,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 이벤트 리스너 초기화
 function initEventListeners() {
-    // 상태 필터 select 변경
-    statusFilter.addEventListener('change', (e) => {
-        currentStatus = e.target.value;
-        loadInquiries(currentStatus);
+    // 네비게이션 아이템 클릭
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const status = item.dataset.status;
+            selectNavItem(status);
+            loadInquiries(status);
+        });
     });
+
+    // 모바일 메뉴 버튼
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+    // 모바일 오버레이 클릭
+    mobileOverlay.addEventListener('click', closeMobileMenu);
 
     // 새로고침 버튼
     refreshBtn.addEventListener('click', () => {
         loadInquiries(currentStatus);
+    });
+}
+
+// 모바일 메뉴 토글
+function toggleMobileMenu() {
+    sidebar.classList.toggle('open');
+    mobileOverlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+}
+
+// 모바일 메뉴 닫기
+function closeMobileMenu() {
+    sidebar.classList.remove('open');
+    mobileOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// 네비게이션 아이템 선택
+function selectNavItem(status) {
+    currentStatus = status;
+    contentTitle.textContent = statusTitles[status] || '전체 문의';
+    
+    navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.status === status) {
+            item.classList.add('active');
+        }
     });
 }
 
@@ -239,9 +279,36 @@ async function deleteInquiry(id) {
     }
 }
 
-// 카운트 업데이트 (사용하지 않지만 호환성을 위해 유지)
+// 카운트 업데이트
 async function updateCounts(inquiries) {
-    // 카운트는 더 이상 표시하지 않음
+    const counts = {
+        all: 0,
+        pending: 0,
+        contacted: 0,
+        completed: 0
+    };
+
+    // 전체 문의 목록 가져오기
+    try {
+        const response = await fetch(API_BASE);
+        const result = await response.json();
+        const allInquiries = result.data || [];
+        
+        counts.all = allInquiries.length;
+        
+        allInquiries.forEach(inquiry => {
+            if (counts.hasOwnProperty(inquiry.status)) {
+                counts[inquiry.status]++;
+            }
+        });
+    } catch (error) {
+        console.error('Error loading counts:', error);
+    }
+
+    document.getElementById('countAll').textContent = counts.all;
+    document.getElementById('countPending').textContent = counts.pending;
+    document.getElementById('countContacted').textContent = counts.contacted;
+    document.getElementById('countCompleted').textContent = counts.completed;
 }
 
 // 로딩 표시

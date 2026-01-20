@@ -106,15 +106,88 @@ body {
 
 /* 관리자 컨테이너 */
 .admin-container {
+    display: flex;
     min-height: 100vh;
+}
+
+/* 사이드바 (PC) */
+.sidebar {
+    width: 280px;
+    background: #0042fc;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 30px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+}
+
+.sidebar-nav {
+    padding: 20px 0;
+}
+
+.nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Paperlogy', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 600;
+}
+
+.nav-item .count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+.nav-item.active .count {
+    background: white;
+    color: #0042fc;
 }
 
 /* 메인 콘텐츠 */
 .main-content {
+    flex: 1;
+    margin-left: 280px;
     padding: 30px;
     min-height: 100vh;
-    max-width: 1200px;
-    margin: 0 auto;
 }
 
 .content-header {
@@ -122,40 +195,12 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    flex-wrap: wrap;
-    gap: 16px;
 }
 
 .content-header h2 {
     font-size: 28px;
     font-weight: 700;
     color: #333;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.status-filter-select {
-    padding: 10px 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: 'Paperlogy', sans-serif;
-    background: white;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 150px;
-}
-
-.status-filter-select:focus {
-    outline: none;
-    border-color: #0042fc;
-    box-shadow: 0 0 0 4px rgba(0, 66, 252, 0.1);
 }
 
 .refresh-btn {
@@ -484,28 +529,53 @@ body {
 }
 
 
+/* 모바일 오버레이 */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+    opacity: 1;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
-    .main-content {
-        padding: 20px;
+    .mobile-menu-btn {
+        display: flex;
     }
 
-    .content-header {
-        flex-direction: column;
-        align-items: flex-start;
+    .sidebar {
+        transform: translateX(100%);
+        width: 280px;
+        right: 0;
+        left: auto;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+        padding-top: 80px;
     }
 
     .content-header h2 {
         font-size: 24px;
     }
 
-    .header-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .status-filter-select {
-        flex: 1;
+    .mobile-overlay {
+        display: block;
     }
 
     .inquiry-details {

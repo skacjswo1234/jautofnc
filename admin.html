@@ -7,25 +7,49 @@
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+    <!-- 모바일 메뉴 버튼 -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="메뉴 열기">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+
     <div class="admin-container">
+        <!-- 사이드바 네비게이션 (PC) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>문의 관리</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-status="all">
+                    <span>전체 문의</span>
+                    <span class="count" id="countAll">0</span>
+                </button>
+                <button class="nav-item" data-status="pending">
+                    <span>대기중</span>
+                    <span class="count" id="countPending">0</span>
+                </button>
+                <button class="nav-item" data-status="contacted">
+                    <span>연락완료</span>
+                    <span class="count" id="countContacted">0</span>
+                </button>
+                <button class="nav-item" data-status="completed">
+                    <span>처리완료</span>
+                    <span class="count" id="countCompleted">0</span>
+                </button>
+            </nav>
+        </aside>
+
         <!-- 메인 콘텐츠 영역 -->
         <main class="main-content">
             <div class="content-header">
-                <h2>문의 관리</h2>
-                <div class="header-actions">
-                    <select class="status-filter-select" id="statusFilter">
-                        <option value="all">전체 문의</option>
-                        <option value="pending">대기중</option>
-                        <option value="contacted">연락완료</option>
-                        <option value="completed">처리완료</option>
-                    </select>
-                    <button class="refresh-btn" id="refreshBtn" aria-label="새로고침">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                </div>
+                <h2 id="contentTitle">전체 문의</h2>
+                <button class="refresh-btn" id="refreshBtn" aria-label="새로고침">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             </div>
 
             <div class="inquiries-list" id="inquiriesList">
@@ -36,6 +60,9 @@
             </div>
         </main>
     </div>
+
+    <!-- 모바일 오버레이 -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <script src="admin.js"></script>
 </body>
