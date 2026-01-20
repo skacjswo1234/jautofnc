@@ -174,13 +174,22 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .content-header h2 {
     font-size: 28px;
     font-weight: 700;
     color: #333;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .refresh-btn {
@@ -224,13 +233,28 @@ body {
     transform: translateY(0);
 }
 
-/* 문의 테이블 컨테이너 */
-.inquiries-table-container {
+/* 로딩 */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.loading.hidden {
+    display: none;
+}
+
+/* 테이블 래퍼 */
+.table-wrapper {
     background: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
+    margin-bottom: 24px;
 }
 
 /* 문의 테이블 */
@@ -238,10 +262,14 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    min-width: 1200px;
 }
 
 .inquiries-table thead {
     background: #f8f9fa;
+}
+
+.inquiries-table thead tr {
     border-bottom: 2px solid #0042fc;
 }
 
@@ -252,7 +280,7 @@ body {
     color: #333;
     font-size: 14px;
     white-space: nowrap;
-    border-bottom: 2px solid #e0e0e0;
+    background: #f8f9fa;
 }
 
 .inquiries-table td {
@@ -504,16 +532,6 @@ body {
     background: #cc0000;
 }
 
-/* 로딩 상태 */
-.loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    color: #666;
-}
-
 .spinner {
     width: 40px;
     height: 40px;
@@ -526,10 +544,6 @@ body {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
-}
-
-.loading.hidden {
-    display: none;
 }
 
 /* 빈 상태 */
@@ -607,13 +621,15 @@ body {
         display: block;
     }
 
-    .inquiries-table-container {
-        padding: 16px;
+    .table-wrapper {
+        margin: 0 -20px;
+        border-radius: 0;
         overflow-x: auto;
     }
 
     .inquiries-table {
         font-size: 12px;
+        min-width: 1000px;
     }
 
     .inquiries-table th,
@@ -622,7 +638,7 @@ body {
     }
 
     .table-memo-cell {
-        max-width: 150px;
+        max-width: 120px;
     }
 
     .table-actions {
@@ -634,6 +650,16 @@ body {
     .delete-btn-small {
         width: 100%;
         font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .page-info {
+        font-size: 12px;
     }
 }
 

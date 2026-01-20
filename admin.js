@@ -12,6 +12,7 @@ const sidebar = document.getElementById('sidebar');
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileOverlay = document.getElementById('mobileOverlay');
 const inquiriesList = document.getElementById('inquiriesList');
+const tableWrapper = document.getElementById('tableWrapper');
 const inquiriesTable = document.getElementById('inquiriesTable');
 const loading = document.getElementById('loading');
 const refreshBtn = document.getElementById('refreshBtn');
@@ -155,24 +156,9 @@ function updatePagination() {
 // 문의 목록 표시 (테이블 형식)
 function displayInquiries(inquiries) {
     if (inquiries.length === 0 && totalItems === 0) {
-        inquiriesTable.style.display = 'none';
+        tableWrapper.style.display = 'none';
         pagination.style.display = 'none';
-        inquiriesList.innerHTML = `
-            <tr>
-                <td colspan="11" style="text-align: center; padding: 60px 20px; color: #999;">
-                    <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5">
-                            <path d="M9 12h6m-3-3v6m-9 1V8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        </svg>
-                        <div>
-                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">문의가 없습니다</h3>
-                            <p style="font-size: 14px;">새로운 문의가 등록되면 여기에 표시됩니다.</p>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        `;
-        inquiriesTable.style.display = 'table';
+        inquiriesList.innerHTML = '';
         return;
     }
 
@@ -217,7 +203,7 @@ function displayInquiries(inquiries) {
         </tr>
     `).join('');
     
-    inquiriesTable.style.display = 'table';
+    tableWrapper.style.display = 'block';
     
     // 메모 편집 모달 추가
     addMemoModals(inquiries);
@@ -436,7 +422,7 @@ async function saveMemo(id) {
 // 로딩 표시
 function showLoading() {
     loading.style.display = 'flex';
-    inquiriesTable.style.display = 'none';
+    tableWrapper.style.display = 'none';
     pagination.style.display = 'none';
 }
 
@@ -447,7 +433,8 @@ function hideLoading() {
 
 // 에러 표시
 function showError(message) {
-    inquiriesTable.style.display = 'table';
+    loading.style.display = 'none';
+    tableWrapper.style.display = 'block';
     inquiriesList.innerHTML = `
         <tr>
             <td colspan="11" style="text-align: center; padding: 40px 20px; color: #ff4444;">
