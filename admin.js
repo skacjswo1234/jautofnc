@@ -171,27 +171,27 @@ function displayInquiries(inquiries) {
     
     inquiriesList.innerHTML = inquiries.map((inquiry, index) => `
         <tr data-id="${inquiry.id}" data-original-memo="${escapeHtml(inquiry.memo || '')}">
-            <td>${startIndex + index + 1}</td>
-            <td>${escapeHtml(inquiry.name)}</td>
-            <td>${escapeHtml(inquiry.phone1)}-${escapeHtml(inquiry.phone2)}-${escapeHtml(inquiry.phone3)}</td>
-            <td>${escapeHtml(inquiry.car_name || '-')}</td>
-            <td>${escapeHtml(inquiry.rent_type)}</td>
-            <td>${escapeHtml(inquiry.months)}</td>
-            <td>${escapeHtml(inquiry.business_type)}</td>
-            <td>
+            <td data-label="번호">${startIndex + index + 1}</td>
+            <td data-label="이름">${escapeHtml(inquiry.name)}</td>
+            <td data-label="연락처">${escapeHtml(inquiry.phone1)}-${escapeHtml(inquiry.phone2)}-${escapeHtml(inquiry.phone3)}</td>
+            <td data-label="차량명">${escapeHtml(inquiry.car_name || '-')}</td>
+            <td data-label="렌트/리스">${escapeHtml(inquiry.rent_type)}</td>
+            <td data-label="개월수">${escapeHtml(inquiry.months)}</td>
+            <td data-label="사업자구분">${escapeHtml(inquiry.business_type)}</td>
+            <td data-label="상태">
                 <div class="status-chips">
                     <button class="status-chip ${inquiry.status === 'pending' ? 'active' : ''} pending" data-status="pending" onclick="updateStatus(${inquiry.id}, 'pending')">대기</button>
                     <button class="status-chip ${inquiry.status === 'contacted' ? 'active' : ''} contacted" data-status="contacted" onclick="updateStatus(${inquiry.id}, 'contacted')">연락</button>
                     <button class="status-chip ${inquiry.status === 'completed' ? 'active' : ''} completed" data-status="completed" onclick="updateStatus(${inquiry.id}, 'completed')">완료</button>
                 </div>
             </td>
-            <td>${formatDate(inquiry.created_at)}</td>
-            <td>
+            <td data-label="등록일시">${formatDate(inquiry.created_at)}</td>
+            <td data-label="메모">
                 <button class="memo-btn ${inquiry.memo ? 'has-memo' : ''}" onclick="toggleMemoEdit(${inquiry.id})" title="메모">
                     ${inquiry.memo ? '📝' : '+'}
                 </button>
             </td>
-            <td>
+            <td data-label="관리">
                 <div class="table-actions-modern">
                     <button class="delete-btn-modern" onclick="deleteInquiry(${inquiry.id})" title="삭제">삭제</button>
                 </div>
