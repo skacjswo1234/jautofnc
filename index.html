@@ -189,6 +189,25 @@
         </div>
     </div>
 
+    <!-- 신청 완료 모달 -->
+    <div id="successModal" class="modal">
+        <div class="modal-content success-modal-content">
+            <div class="success-modal-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="#0042fc" stroke-width="2" fill="none"/>
+                    <path d="M8 12l2 2 4-4" stroke="#0042fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="success-modal-body">
+                <h3>신청 완료</h3>
+                <p>문의가 성공적으로 접수되었습니다.<br>빠른 시일 내에 연락드리겠습니다.</p>
+            </div>
+            <div class="success-modal-footer">
+                <button class="success-modal-btn" id="successModalConfirm">확인</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 모달 열기
         document.getElementById('privacyModalBtn').addEventListener('click', function(e) {
@@ -294,8 +313,8 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('문의가 성공적으로 접수되었습니다.');
                     consultationFormEl.reset();
+                    showSuccessModal();
                 } else {
                     alert('문의 접수에 실패했습니다: ' + (result.error || '알 수 없는 오류'));
                 }
@@ -305,6 +324,30 @@
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
+            }
+        });
+
+        // 신청 완료 모달 표시
+        function showSuccessModal() {
+            const successModal = document.getElementById('successModal');
+            successModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 신청 완료 모달 닫기
+        function closeSuccessModal() {
+            const successModal = document.getElementById('successModal');
+            successModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 신청 완료 모달 확인 버튼
+        document.getElementById('successModalConfirm').addEventListener('click', closeSuccessModal);
+
+        // 신청 완료 모달 배경 클릭 시 닫기
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
             }
         });
     </script>
