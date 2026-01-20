@@ -1,14 +1,13 @@
 // API 기본 URL
 const API_BASE = '/api/inquiries';
 
-// 현재 선택된 상태
+// 현재 선택된 상태 (항상 전체)
 let currentStatus = 'all';
 
 // DOM 요소
 const sidebar = document.getElementById('sidebar');
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileOverlay = document.getElementById('mobileOverlay');
-const navItems = document.querySelectorAll('.nav-item');
 const inquiriesList = document.getElementById('inquiriesList');
 const loading = document.getElementById('loading');
 const refreshBtn = document.getElementById('refreshBtn');
@@ -26,19 +25,11 @@ const statusTitles = {
 document.addEventListener('DOMContentLoaded', () => {
     initEventListeners();
     loadInquiries('all');
+    contentTitle.textContent = '문의 리스트';
 });
 
 // 이벤트 리스너 초기화
 function initEventListeners() {
-    // 네비게이션 아이템 클릭
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const status = item.dataset.status;
-            selectNavItem(status);
-            loadInquiries(status);
-        });
-    });
-
     // 모바일 메뉴 버튼
     mobileMenuBtn.addEventListener('click', toggleMobileMenu);
 
@@ -47,7 +38,7 @@ function initEventListeners() {
 
     // 새로고침 버튼
     refreshBtn.addEventListener('click', () => {
-        loadInquiries(currentStatus);
+        loadInquiries('all');
     });
 }
 
@@ -65,19 +56,6 @@ function closeMobileMenu() {
     document.body.style.overflow = '';
 }
 
-// 네비게이션 아이템 선택
-function selectNavItem(status) {
-    currentStatus = status;
-    contentTitle.textContent = statusTitles[status] || '전체 문의';
-    
-    navItems.forEach(item => {
-        item.classList.remove('active');
-        if (item.dataset.status === status) {
-            item.classList.add('active');
-        }
-    });
-}
-
 // 문의 목록 로드
 async function loadInquiries(status = 'all') {
     showLoading();
@@ -92,7 +70,6 @@ async function loadInquiries(status = 'all') {
         
         if (result.success) {
             displayInquiries(result.data);
-            updateCounts(result.data);
         } else {
             showError('문의 목록을 불러오는데 실패했습니다.');
         }
@@ -120,7 +97,7 @@ function displayInquiries(inquiries) {
     }
 
     inquiriesList.innerHTML = inquiries.map(inquiry => `
-        <div class="inquiry-card" data-id="${inquiry.id}">
+        <div class="inquiry-card" data-id="${inquiry.id}" data-original-memo="${escapeHtml(inquiry.memo || '')}">
             <div class="inquiry-header">
                 <div class="inquiry-info">
                     <div class="inquiry-name">${escapeHtml(inquiry.name)}</div>
@@ -245,7 +222,7 @@ async function updateStatus(id, status) {
         const result = await response.json();
 
         if (result.success) {
-            loadInquiries(currentStatus);
+            loadInquiries('all');
         } else {
             alert('상태 업데이트에 실패했습니다: ' + result.error);
         }
@@ -269,7 +246,7 @@ async function deleteInquiry(id) {
         const result = await response.json();
 
         if (result.success) {
-            loadInquiries(currentStatus);
+            loadInquiries('all');
         } else {
             alert('삭제에 실패했습니다: ' + result.error);
         }
@@ -279,36 +256,107 @@ async function deleteInquiry(id) {
     }
 }
 
-// 카운트 업데이트
-async function updateCounts(inquiries) {
-    const counts = {
-        all: 0,
-        pending: 0,
-        contacted: 0,
-        completed: 0
-    };
-
-    // 전체 문의 목록 가져오기
-    try {
-        const response = await fetch(API_BASE);
-        const result = await response.json();
-        const allInquiries = result.data || [];
-        
-        counts.all = allInquiries.length;
-        
-        allInquiries.forEach(inquiry => {
-            if (counts.hasOwnProperty(inquiry.status)) {
-                counts[inquiry.status]++;
-            }
-        });
-    } catch (error) {
-        console.error('Error loading counts:', error);
+// 메모 편집 모드 토글
+function toggleMemoEdit(id) {
+    const displayEl = document.getElementById(`memo-display-${id}`);
+    const editEl = document.getElementById(`memo-edit-${id}`);
+    const textarea = document.getElementById(`memo-textarea-${id}`);
+    
+    if (!displayEl || !editEl || !textarea) {
+        console.error('Memo elements not found for id:', id);
+        return;
     }
+    
+    // 원본 메모 저장
+    const card = document.querySelector(`.inquiry-card[data-id="${id}"]`);
+    if (card && !card.dataset.originalMemo) {
+        card.dataset.originalMemo = textarea.value;
+    }
+    
+    if (editEl.style.display === 'none' || editEl.style.display === '') {
+        displayEl.style.display = 'none';
+        editEl.style.display = 'block';
+        textarea.focus();
+    } else {
+        displayEl.style.display = 'block';
+        editEl.style.display = 'none';
+    }
+}
 
-    document.getElementById('countAll').textContent = counts.all;
-    document.getElementById('countPending').textContent = counts.pending;
-    document.getElementById('countContacted').textContent = counts.contacted;
-    document.getElementById('countCompleted').textContent = counts.completed;
+// 메모 편집 취소
+function cancelMemoEdit(id) {
+    const displayEl = document.getElementById(`memo-display-${id}`);
+    const editEl = document.getElementById(`memo-edit-${id}`);
+    const textarea = document.getElementById(`memo-textarea-${id}`);
+    
+    if (!displayEl || !editEl || !textarea) {
+        console.error('Memo elements not found for id:', id);
+        return;
+    }
+    
+    // 원래 값으로 복원 (카드에서 데이터 가져오기)
+    const card = document.querySelector(`.inquiry-card[data-id="${id}"]`);
+    if (card) {
+        const originalMemo = card.dataset.originalMemo || '';
+        textarea.value = originalMemo;
+    }
+    
+    displayEl.style.display = 'block';
+    editEl.style.display = 'none';
+}
+
+// 메모 저장
+async function saveMemo(id) {
+    const textarea = document.getElementById(`memo-textarea-${id}`);
+    if (!textarea) {
+        console.error('Textarea not found for id:', id);
+        return;
+    }
+    
+    const memo = textarea.value.trim();
+    
+    try {
+        const response = await fetch(API_BASE, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id, memo }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // 메모 표시 업데이트
+            const displayEl = document.getElementById(`memo-display-${id}`);
+            const editEl = document.getElementById(`memo-edit-${id}`);
+            
+            if (!displayEl || !editEl) {
+                console.error('Display or edit element not found for id:', id);
+                return;
+            }
+            
+            if (memo) {
+                displayEl.innerHTML = escapeHtml(memo).replace(/\n/g, '<br>');
+            } else {
+                displayEl.innerHTML = '<span class="memo-placeholder">메모를 입력하세요.</span>';
+            }
+            
+            // 원본 메모 저장
+            const card = document.querySelector(`.inquiry-card[data-id="${id}"]`);
+            if (card) {
+                card.dataset.originalMemo = memo;
+            }
+            
+            displayEl.style.display = 'block';
+            editEl.style.display = 'none';
+        } else {
+            alert('메모 저장에 실패했습니다: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Error saving memo:', error);
+        alert('메모 저장에 실패했습니다.');
+    }
 }
 
 // 로딩 표시

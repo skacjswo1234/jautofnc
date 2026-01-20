@@ -143,43 +143,15 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 16px 20px;
-    background: none;
+    background: rgba(255, 255, 255, 0.2);
     border: none;
-    color: rgba(255, 255, 255, 0.8);
+    color: white;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     font-family: 'Paperlogy', sans-serif;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    cursor: default;
     text-align: left;
-}
-
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.nav-item.active {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    font-weight: 600;
-}
-
-.nav-item .count {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    min-width: 30px;
-    text-align: center;
-}
-
-.nav-item.active .count {
-    background: white;
-    color: #0042fc;
 }
 
 /* 메인 콘텐츠 */
