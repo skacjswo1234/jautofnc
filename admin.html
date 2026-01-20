@@ -22,12 +22,41 @@
     <!-- 모바일 오버레이 -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
 
+    <!-- 비밀번호 변경 모달 -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-modal-content">
+            <div class="password-modal-header">
+                <h3>비밀번호 변경</h3>
+                <button class="password-modal-close" id="passwordModalClose" aria-label="닫기">&times;</button>
+            </div>
+            <div class="password-modal-body">
+                <div class="password-form-group">
+                    <label for="currentPassword">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" placeholder="현재 비밀번호">
+                </div>
+                <div class="password-form-group">
+                    <label for="newPassword">새 비밀번호</label>
+                    <input type="password" id="newPassword" placeholder="새 비밀번호">
+                </div>
+            </div>
+            <div class="password-modal-footer">
+                <button class="password-save-btn" id="passwordSaveBtn">변경하기</button>
+                <button class="password-cancel-btn" id="passwordCancelBtn">취소</button>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-container">
         <!-- 사이드바 (PC: 왼쪽 고정, 모바일: 오른쪽에서 슬라이드) -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h1>JAUTO-FNC</h1>
-                <p class="sidebar-subtitle">문의 관리</p>
+                <div class="sidebar-header-row">
+                    <div>
+                        <h1>JAUTO-FNC</h1>
+                        <p class="sidebar-subtitle">문의 관리</p>
+                    </div>
+                    <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="닫기">&times;</button>
+                </div>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-item active">
@@ -41,6 +70,7 @@
             <div class="content-header">
                 <h2 id="contentTitle">문의 리스트</h2>
                 <div class="header-actions">
+                    <button class="password-btn" id="passwordBtn">비밀번호 변경</button>
                     <button class="logout-btn" id="logoutBtn">로그아웃</button>
                     <button class="refresh-btn" id="refreshBtn" aria-label="새로고침">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

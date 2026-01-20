@@ -20,6 +20,11 @@ const pagination = document.getElementById('pagination');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
+const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+const passwordModal = document.getElementById('passwordModal');
+const passwordModalClose = document.getElementById('passwordModalClose');
+const passwordSaveBtn = document.getElementById('passwordSaveBtn');
+const passwordCancelBtn = document.getElementById('passwordCancelBtn');
 const detailModal = document.getElementById('detailModal');
 const detailModalBody = document.getElementById('detailModalBody');
 const detailModalClose = document.getElementById('detailModalClose');
@@ -83,6 +88,31 @@ function initEventListeners() {
         });
     }
 
+    // 비밀번호 변경 버튼
+    const passwordBtn = document.getElementById('passwordBtn');
+    if (passwordBtn) {
+        passwordBtn.addEventListener('click', openPasswordModal);
+    }
+    if (passwordModalClose) {
+        passwordModalClose.addEventListener('click', closePasswordModal);
+    }
+    if (passwordCancelBtn) {
+        passwordCancelBtn.addEventListener('click', closePasswordModal);
+    }
+    if (passwordModal) {
+        passwordModal.addEventListener('click', (event) => {
+            if (event.target === passwordModal) {
+                closePasswordModal();
+            }
+        });
+    }
+    if (passwordSaveBtn) {
+        passwordSaveBtn.addEventListener('click', handlePasswordChange);
+    }
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', closeMobileMenu);
+    }
+
     // 상세 모달 닫기
     if (detailModalClose) {
         detailModalClose.addEventListener('click', closeDetailModal);
@@ -131,6 +161,59 @@ function closeMobileMenu() {
         mobileOverlay.classList.remove('active');
     }
     document.body.style.overflow = '';
+}
+
+// 비밀번호 모달 열기
+function openPasswordModal() {
+    if (!passwordModal) return;
+    passwordModal.classList.add('active');
+}
+
+// 비밀번호 모달 닫기
+function closePasswordModal() {
+    if (!passwordModal) return;
+    passwordModal.classList.remove('active');
+    const currentInput = document.getElementById('currentPassword');
+    const newInput = document.getElementById('newPassword');
+    if (currentInput) currentInput.value = '';
+    if (newInput) newInput.value = '';
+}
+
+// 비밀번호 변경 처리
+async function handlePasswordChange() {
+    const currentInput = document.getElementById('currentPassword');
+    const newInput = document.getElementById('newPassword');
+    if (!currentInput || !newInput) return;
+
+    const currentPassword = currentInput.value.trim();
+    const newPassword = newInput.value.trim();
+
+    if (!currentPassword || !newPassword) {
+        alert('현재 비밀번호와 새 비밀번호를 모두 입력하세요.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/admin/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ currentPassword, newPassword }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('비밀번호가 변경되었습니다.');
+            closePasswordModal();
+        } else {
+            alert(result.error || '비밀번호 변경에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('Error changing password:', error);
+        alert('비밀번호 변경에 실패했습니다.');
+    }
 }
 
 // 문의 목록 로드

@@ -163,6 +163,13 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.sidebar-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
 .sidebar-header h1 {
     font-size: 24px;
     font-weight: 700;
@@ -175,6 +182,24 @@ body {
     margin-top: 8px;
     opacity: 0.8;
     color: white;
+}
+
+.sidebar-close-btn {
+    display: none;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .sidebar-nav {
@@ -231,6 +256,22 @@ body {
     display: flex;
     gap: 12px;
     align-items: center;
+}
+
+.password-btn {
+    padding: 10px 16px;
+    background: #0042fc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.password-btn:hover {
+    background: #0033cc;
 }
 
 .logout-btn {
@@ -608,6 +649,139 @@ body {
 }
 
 /* ============================================
+   비밀번호 변경 모달
+   ============================================ */
+.password-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2050;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.password-modal.active {
+    display: flex;
+}
+
+.password-modal-content {
+    width: 100%;
+    max-width: 460px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.password-modal-header {
+    background: linear-gradient(135deg, #0042fc 0%, #0033cc 100%);
+    color: white;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.password-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.password-modal-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.password-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.password-modal-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.password-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.password-form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.password-form-group input {
+    padding: 12px 14px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.password-form-group input:focus {
+    outline: none;
+    border-color: #0042fc;
+}
+
+.password-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.password-save-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #0042fc;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.password-save-btn:hover {
+    background: #0033cc;
+}
+
+.password-cancel-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #e9ecef;
+    color: #495057;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.password-cancel-btn:hover {
+    background: #dee2e6;
+}
+
+/* ============================================
    상세 모달
    ============================================ */
 .detail-modal {
@@ -877,6 +1051,15 @@ body {
         justify-content: space-between;
     }
 
+    .sidebar-close-btn {
+        display: inline-flex;
+    }
+
+    .password-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
     /* 모바일 오버레이 표시 */
     .mobile-overlay {
         display: block;
@@ -970,5 +1153,18 @@ body {
     .page-btn {
         flex: 1;
         padding: 12px;
+    }
+
+    .password-modal-content {
+        max-width: 100%;
+    }
+
+    .password-modal-footer {
+        flex-direction: column;
+    }
+
+    .password-save-btn,
+    .password-cancel-btn {
+        width: 100%;
     }
 }
