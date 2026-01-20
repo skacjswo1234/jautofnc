@@ -13,7 +13,6 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileOverlay = document.getElementById('mobileOverlay');
 const inquiriesList = document.getElementById('inquiriesList');
 const tableWrapper = document.getElementById('tableWrapper');
-const inquiriesTable = document.getElementById('inquiriesTable');
 const loading = document.getElementById('loading');
 const refreshBtn = document.getElementById('refreshBtn');
 const contentTitle = document.getElementById('contentTitle');
@@ -22,22 +21,8 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
 
-// 상태별 제목 매핑
-const statusTitles = {
-    all: '전체 문의',
-    pending: '대기중 문의',
-    contacted: '연락완료 문의',
-    completed: '처리완료 문의'
-};
-
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    // 로그인 체크
-    if (!localStorage.getItem('admin_logged_in')) {
-        window.location.href = '/login.html';
-        return;
-    }
-    
     initEventListeners();
     loadInquiries('all');
     contentTitle.textContent = '문의 리스트';
@@ -46,32 +31,42 @@ document.addEventListener('DOMContentLoaded', () => {
 // 이벤트 리스너 초기화
 function initEventListeners() {
     // 모바일 메뉴 버튼
-    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    }
 
     // 모바일 오버레이 클릭
-    mobileOverlay.addEventListener('click', closeMobileMenu);
+    if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+    }
 
     // 새로고침 버튼
-    refreshBtn.addEventListener('click', () => {
-        currentPage = 1;
-        loadInquiries('all');
-    });
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            currentPage = 1;
+            loadInquiries('all');
+        });
+    }
 
     // 페이징 버튼
-    prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            displayPage();
-        }
-    });
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayPage();
+            }
+        });
+    }
 
-    nextBtn.addEventListener('click', () => {
-        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayPage();
-        }
-    });
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayPage();
+            }
+        });
+    }
 
     // 로그아웃 버튼
     const logoutBtn = document.getElementById('logoutBtn');
@@ -87,15 +82,23 @@ function initEventListeners() {
 
 // 모바일 메뉴 토글
 function toggleMobileMenu() {
-    sidebar.classList.toggle('open');
-    mobileOverlay.classList.toggle('active');
-    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    if (sidebar) {
+        sidebar.classList.toggle('open');
+    }
+    if (mobileOverlay) {
+        mobileOverlay.classList.toggle('active');
+    }
+    document.body.style.overflow = sidebar && sidebar.classList.contains('open') ? 'hidden' : '';
 }
 
 // 모바일 메뉴 닫기
 function closeMobileMenu() {
-    sidebar.classList.remove('open');
-    mobileOverlay.classList.remove('active');
+    if (sidebar) {
+        sidebar.classList.remove('open');
+    }
+    if (mobileOverlay) {
+        mobileOverlay.classList.remove('active');
+    }
     document.body.style.overflow = '';
 }
 
@@ -142,22 +145,24 @@ function updatePagination() {
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
     
     if (totalItems === 0) {
-        pagination.style.display = 'none';
+        if (pagination) pagination.style.display = 'none';
         return;
     }
     
-    pagination.style.display = 'flex';
-    pageInfo.textContent = `${currentPage} / ${totalPages} (총 ${totalItems}건)`;
+    if (pagination) pagination.style.display = 'flex';
+    if (pageInfo) pageInfo.textContent = `${currentPage} / ${totalPages} (총 ${totalItems}건)`;
     
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
 }
 
 // 문의 목록 표시 (테이블 형식)
 function displayInquiries(inquiries) {
+    if (!inquiriesList) return;
+
     if (inquiries.length === 0 && totalItems === 0) {
-        tableWrapper.style.display = 'none';
-        pagination.style.display = 'none';
+        if (tableWrapper) tableWrapper.style.display = 'none';
+        if (pagination) pagination.style.display = 'none';
         inquiriesList.innerHTML = '';
         return;
     }
@@ -174,7 +179,11 @@ function displayInquiries(inquiries) {
             <td>${escapeHtml(inquiry.months)}</td>
             <td>${escapeHtml(inquiry.business_type)}</td>
             <td>
-                <span class="inquiry-status ${inquiry.status}">${getStatusText(inquiry.status)}</span>
+                <div class="status-chips">
+                    <button class="status-chip ${inquiry.status === 'pending' ? 'active' : ''} pending" data-status="pending" onclick="updateStatus(${inquiry.id}, 'pending')">대기</button>
+                    <button class="status-chip ${inquiry.status === 'contacted' ? 'active' : ''} contacted" data-status="contacted" onclick="updateStatus(${inquiry.id}, 'contacted')">연락</button>
+                    <button class="status-chip ${inquiry.status === 'completed' ? 'active' : ''} completed" data-status="completed" onclick="updateStatus(${inquiry.id}, 'completed')">완료</button>
+                </div>
             </td>
             <td>${formatDate(inquiry.created_at)}</td>
             <td>
@@ -184,11 +193,6 @@ function displayInquiries(inquiries) {
             </td>
             <td>
                 <div class="table-actions-modern">
-                    <div class="status-chips">
-                        <button class="status-chip ${inquiry.status === 'pending' ? 'active' : ''}" data-status="pending" onclick="updateStatus(${inquiry.id}, 'pending')">대기</button>
-                        <button class="status-chip ${inquiry.status === 'contacted' ? 'active' : ''}" data-status="contacted" onclick="updateStatus(${inquiry.id}, 'contacted')">연락</button>
-                        <button class="status-chip ${inquiry.status === 'completed' ? 'active' : ''}" data-status="completed" onclick="updateStatus(${inquiry.id}, 'completed')">완료</button>
-                    </div>
                     <button class="delete-btn-modern" onclick="deleteInquiry(${inquiry.id})" title="삭제">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -199,7 +203,7 @@ function displayInquiries(inquiries) {
         </tr>
     `).join('');
     
-    tableWrapper.style.display = 'block';
+    if (tableWrapper) tableWrapper.style.display = 'block';
     
     // 메모 편집 모달 추가
     addMemoModals(inquiries);
@@ -233,32 +237,19 @@ function addMemoModals(inquiries) {
     });
 }
 
-// 상태 텍스트 변환
-function getStatusText(status) {
-    const statusMap = {
-        pending: '대기중',
-        contacted: '연락완료',
-        completed: '처리완료'
-    };
-    return statusMap[status] || status;
-}
-
 // 날짜 포맷팅 (한국 시간 기준)
 function formatDate(dateString) {
-    // 데이터베이스에 저장된 날짜 문자열을 파싱
-    // 형식: "YYYY-MM-DD HH:MM:SS" 또는 ISO 형식
+    if (!dateString) return '-';
+    
     let date;
     
     if (dateString.includes('T')) {
-        // ISO 형식인 경우 (예: "2024-01-01T12:00:00Z")
-        // 데이터베이스에 한국 시간으로 저장되었으므로, UTC로 해석하지 않고 로컬로 파싱
         const dateStr = dateString.replace('Z', '').replace('T', ' ');
         const [datePart, timePart] = dateStr.split(' ');
         const [y, m, d] = datePart.split('-');
-        const [h, min, sec] = timePart.split(':');
-        date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), parseInt(h), parseInt(min), parseInt(sec || 0));
+        const [h, min, sec] = (timePart || '').split(':');
+        date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), parseInt(h || 0), parseInt(min || 0), parseInt(sec || 0));
     } else {
-        // "YYYY-MM-DD HH:MM:SS" 형식인 경우
         const [datePart, timePart] = dateString.split(' ');
         const [y, m, d] = datePart.split('-');
         const [h, min, sec] = (timePart || '').split(':');
@@ -275,6 +266,7 @@ function formatDate(dateString) {
 
 // HTML 이스케이프
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
@@ -380,16 +372,12 @@ async function saveMemo(id) {
         const result = await response.json();
 
         if (result.success) {
-            // 전체 데이터 업데이트
             const inquiryIndex = allInquiries.findIndex(inq => inq.id === id);
             if (inquiryIndex !== -1) {
                 allInquiries[inquiryIndex].memo = memo;
             }
             
-            // 현재 페이지 다시 표시
             displayPage();
-            
-            // 모달 닫기
             closeMemoModal(id);
         } else {
             alert('메모 저장에 실패했습니다: ' + result.error);
@@ -402,29 +390,31 @@ async function saveMemo(id) {
 
 // 로딩 표시
 function showLoading() {
-    loading.style.display = 'flex';
-    tableWrapper.style.display = 'none';
-    pagination.style.display = 'none';
+    if (loading) loading.style.display = 'flex';
+    if (tableWrapper) tableWrapper.style.display = 'none';
+    if (pagination) pagination.style.display = 'none';
 }
 
 // 로딩 숨김
 function hideLoading() {
-    loading.style.display = 'none';
+    if (loading) loading.style.display = 'none';
 }
 
 // 에러 표시
 function showError(message) {
-    loading.style.display = 'none';
-    tableWrapper.style.display = 'block';
-    inquiriesList.innerHTML = `
-        <tr>
-            <td colspan="11" style="text-align: center; padding: 40px 20px; color: #ff4444;">
-                <h3>오류 발생</h3>
-                <p>${escapeHtml(message)}</p>
-            </td>
-        </tr>
-    `;
-    pagination.style.display = 'none';
+    if (loading) loading.style.display = 'none';
+    if (tableWrapper) tableWrapper.style.display = 'block';
+    if (inquiriesList) {
+        inquiriesList.innerHTML = `
+            <tr>
+                <td colspan="11" style="text-align: center; padding: 40px 20px; color: #ff4444;">
+                    <h3>오류 발생</h3>
+                    <p>${escapeHtml(message)}</p>
+                </td>
+            </tr>
+        `;
+    }
+    if (pagination) pagination.style.display = 'none';
 }
 
 // 전역 함수로 export (HTML에서 직접 호출하기 위해)

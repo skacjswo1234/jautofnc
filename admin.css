@@ -385,29 +385,14 @@ body {
     box-shadow: 0 2px 8px rgba(0, 66, 252, 0.3);
 }
 
-.status-chip.pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
 .status-chip.pending.active {
     background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
     color: white;
 }
 
-.status-chip.contacted {
-    background: #cfe2ff;
-    color: #084298;
-}
-
 .status-chip.contacted.active {
     background: linear-gradient(135deg, #0d6efd 0%, #0042fc 100%);
     color: white;
-}
-
-.status-chip.completed {
-    background: #d1e7dd;
-    color: #0f5132;
 }
 
 .status-chip.completed.active {
