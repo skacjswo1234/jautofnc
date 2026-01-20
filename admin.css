@@ -75,30 +75,46 @@ body {
     overflow-x: hidden;
 }
 
-/* 모바일 메뉴 버튼 */
-.mobile-menu-btn {
+/* 모바일 헤더 */
+.mobile-header {
     display: none;
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: white;
+    border-bottom: 2px solid #0042fc;
     z-index: 1001;
-    width: 48px;
-    height: 48px;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-header-left h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0042fc;
+    margin: 0;
+}
+
+.mobile-menu-btn {
+    width: 40px;
+    height: 40px;
     background: #0042fc;
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
+    display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px rgba(0, 66, 252, 0.4);
     transition: all 0.3s ease;
 }
 
 .mobile-menu-btn:hover {
     background: #0033cc;
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 66, 252, 0.5);
 }
 
 .mobile-menu-btn:active {
@@ -796,15 +812,21 @@ body {
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
-    .mobile-menu-btn {
+    /* 모바일 헤더 표시 */
+    .mobile-header {
         display: flex;
     }
 
+    /* PC 사이드바 숨김 */
     .sidebar {
-        transform: translateX(100%);
-        width: 280px;
+        position: fixed;
+        top: 0;
         right: 0;
-        left: auto;
+        width: 280px;
+        height: 100vh;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1002;
         box-shadow: -2px 0 16px rgba(0, 0, 0, 0.2);
     }
 
@@ -812,20 +834,23 @@ body {
         transform: translateX(0);
     }
 
+    /* 메인 콘텐츠 */
     .main-content {
         margin-left: 0;
         padding: 20px;
         padding-top: 80px;
     }
 
+    /* 콘텐츠 헤더 */
     .content-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 16px;
+        margin-bottom: 20px;
     }
 
     .content-header h2 {
-        font-size: 22px;
+        font-size: 20px;
     }
 
     .header-actions {
@@ -833,10 +858,12 @@ body {
         justify-content: space-between;
     }
 
+    /* 모바일 오버레이 표시 */
     .mobile-overlay {
         display: block;
     }
 
+    /* 테이블 래퍼 */
     .table-wrapper {
         margin: 0 -20px;
         border-radius: 0;
@@ -859,6 +886,7 @@ body {
         font-size: 12px;
     }
 
+    /* 액션 버튼 */
     .table-actions-modern {
         flex-direction: column;
         align-items: stretch;
@@ -886,6 +914,7 @@ body {
         height: 32px;
     }
 
+    /* 메모 모달 */
     .memo-modal {
         padding: 16px;
     }
@@ -913,6 +942,7 @@ body {
         width: 100%;
     }
 
+    /* 페이징 */
     .pagination {
         flex-wrap: wrap;
         gap: 12px;
