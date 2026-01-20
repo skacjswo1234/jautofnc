@@ -80,18 +80,24 @@ body {
    ============================================ */
 .mobile-header {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: white;
-    border-bottom: 2px solid #0042fc;
-    z-index: 1001;
-    padding: 0 20px;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .mobile-header {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: white;
+        border-bottom: 2px solid #0042fc;
+        z-index: 1001;
+        padding: 0 20px;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 }
 
 .mobile-header-left h1 {
@@ -645,11 +651,6 @@ body {
    모바일 반응형 (768px 이하)
    ============================================ */
 @media (max-width: 768px) {
-    /* 모바일 헤더 표시 */
-    .mobile-header {
-        display: flex;
-    }
-
     /* 사이드바: 오른쪽에서 왼쪽으로 슬라이드 */
     .sidebar {
         position: fixed;
