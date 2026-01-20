@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문의 관리 - 제이오토</title>
+    <title>문의 관리 - JAUTO-FNC</title>
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <!-- 모바일 헤더 -->
+    <!-- 모바일 헤더 (모바일에서만 표시) -->
     <header class="mobile-header">
         <div class="mobile-header-left">
             <h1>JAUTO-FNC</h1>
@@ -19,12 +19,15 @@
         </button>
     </header>
 
+    <!-- 모바일 오버레이 (사이드바 열릴 때 배경) -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <div class="admin-container">
-        <!-- 사이드바 네비게이션 (PC) -->
+        <!-- 사이드바 (PC: 왼쪽 고정, 모바일: 오른쪽에서 슬라이드) -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1>JAUTO-FNC</h1>
-                <p style="font-size: 14px; margin-top: 8px; opacity: 0.8;">문의 관리</p>
+                <p class="sidebar-subtitle">문의 관리</p>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-item active">
@@ -83,11 +86,8 @@
         </main>
     </div>
 
-    <!-- 모바일 오버레이 -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-
     <script>
-        // 로그인 체크 (세션/토큰 없이 localStorage 플래그만 확인)
+        // 로그인 체크
         if (!localStorage.getItem('admin_logged_in')) {
             window.location.href = '/login.html';
         }

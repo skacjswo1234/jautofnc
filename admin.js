@@ -178,8 +178,8 @@ function displayInquiries(inquiries) {
             </td>
             <td>${formatDate(inquiry.created_at)}</td>
             <td>
-                <button class="memo-btn" onclick="toggleMemoEdit(${inquiry.id})" title="메모">
-                    ${inquiry.memo ? '<span class="memo-has-text">📝</span>' : '<span class="memo-empty">+</span>'}
+                <button class="memo-btn ${inquiry.memo ? 'has-memo' : ''}" onclick="toggleMemoEdit(${inquiry.id})" title="메모">
+                    ${inquiry.memo ? '📝' : '+'}
                 </button>
             </td>
             <td>
@@ -214,7 +214,6 @@ function addMemoModals(inquiries) {
         const modal = document.createElement('div');
         modal.className = 'memo-modal';
         modal.id = `memo-modal-${inquiry.id}`;
-        modal.style.display = 'none';
         modal.innerHTML = `
             <div class="memo-modal-content">
                 <div class="memo-modal-header">
@@ -333,14 +332,14 @@ async function deleteInquiry(id) {
 function toggleMemoEdit(id) {
     const modal = document.getElementById(`memo-modal-${id}`);
     if (modal) {
-        modal.style.display = 'flex';
+        modal.classList.add('active');
         const textarea = document.getElementById(`memo-textarea-${id}`);
         if (textarea) {
             const row = document.querySelector(`tr[data-id="${id}"]`);
             if (row && !row.dataset.originalMemo) {
                 row.dataset.originalMemo = textarea.value;
             }
-            textarea.focus();
+            setTimeout(() => textarea.focus(), 100);
         }
     }
 }
@@ -355,7 +354,7 @@ function closeMemoModal(id) {
             const originalMemo = row.dataset.originalMemo || '';
             textarea.value = originalMemo;
         }
-        modal.style.display = 'none';
+        modal.classList.remove('active');
     }
 }
 
