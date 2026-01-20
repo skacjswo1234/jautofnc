@@ -148,6 +148,27 @@ function displayInquiries(inquiries) {
                     <span class="detail-value">${escapeHtml(inquiry.business_type)}</span>
                 </div>
             </div>
+            <div class="inquiry-memo">
+                <div class="memo-label">
+                    <span>메모</span>
+                    <button class="memo-edit-btn" onclick="toggleMemoEdit(${inquiry.id})" data-id="${inquiry.id}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="memo-display" id="memo-display-${inquiry.id}">
+                    ${inquiry.memo ? escapeHtml(inquiry.memo).replace(/\n/g, '<br>') : '<span class="memo-placeholder">메모를 입력하세요.</span>'}
+                </div>
+                <div class="memo-edit" id="memo-edit-${inquiry.id}" style="display: none;">
+                    <textarea class="memo-textarea" id="memo-textarea-${inquiry.id}" placeholder="메모를 입력하세요.">${escapeHtml(inquiry.memo || '')}</textarea>
+                    <div class="memo-actions">
+                        <button class="memo-save-btn" onclick="saveMemo(${inquiry.id})">저장</button>
+                        <button class="memo-cancel-btn" onclick="cancelMemoEdit(${inquiry.id})">취소</button>
+                    </div>
+                </div>
+            </div>
             <div class="inquiry-footer">
                 <div class="inquiry-date">${formatDate(inquiry.created_at)}</div>
                 <div class="inquiry-actions">
@@ -173,9 +194,28 @@ function getStatusText(status) {
     return statusMap[status] || status;
 }
 
-// 날짜 포맷팅
+// 날짜 포맷팅 (한국 시간 기준)
 function formatDate(dateString) {
-    const date = new Date(dateString);
+    // 데이터베이스에 저장된 날짜 문자열을 파싱
+    // 형식: "YYYY-MM-DD HH:MM:SS" 또는 ISO 형식
+    let date;
+    
+    if (dateString.includes('T')) {
+        // ISO 형식인 경우 (예: "2024-01-01T12:00:00Z")
+        // 데이터베이스에 한국 시간으로 저장되었으므로, UTC로 해석하지 않고 로컬로 파싱
+        const dateStr = dateString.replace('Z', '').replace('T', ' ');
+        const [datePart, timePart] = dateStr.split(' ');
+        const [y, m, d] = datePart.split('-');
+        const [h, min, sec] = timePart.split(':');
+        date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), parseInt(h), parseInt(min), parseInt(sec || 0));
+    } else {
+        // "YYYY-MM-DD HH:MM:SS" 형식인 경우
+        const [datePart, timePart] = dateString.split(' ');
+        const [y, m, d] = datePart.split('-');
+        const [h, min, sec] = (timePart || '').split(':');
+        date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d), parseInt(h || 0), parseInt(min || 0), parseInt(sec || 0));
+    }
+    
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -296,3 +336,6 @@ function showError(message) {
 // 전역 함수로 export (HTML에서 직접 호출하기 위해)
 window.updateStatus = updateStatus;
 window.deleteInquiry = deleteInquiry;
+window.toggleMemoEdit = toggleMemoEdit;
+window.cancelMemoEdit = cancelMemoEdit;
+window.saveMemo = saveMemo;

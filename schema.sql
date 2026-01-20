@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS inquiries (
     rent_type TEXT NOT NULL,
     months TEXT NOT NULL,
     business_type TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status TEXT DEFAULT 'pending' -- pending, contacted, completed
+    created_at DATETIME DEFAULT (datetime('now', '+9 hours')),
+    status TEXT DEFAULT 'pending',
+    memo TEXT
 );
 
 -- 인덱스 생성
