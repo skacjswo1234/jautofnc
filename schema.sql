@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS inquiries (
     business_type TEXT NOT NULL,
     created_at DATETIME DEFAULT (datetime('now', '+9 hours')),
     status TEXT DEFAULT 'pending',
-    memo TEXT
+    memo TEXT 
 );
 
 -- 인덱스 생성
