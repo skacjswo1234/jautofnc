@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제이오토 - 장기렌트 리스 전문</title>
+    <meta name="description" content="제이오토에서 제공하는 장기렌트 및 리스 서비스. 합리적인 가격과 전문 상담으로 최적의 차량을 찾아보세요.">
+    <meta name="keywords" content="제이오토, 장기렌트, 리스, 자동차렌트, 장기렌트카, 리스카">
+    <meta name="author" content="제이오토">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="제이오토 - 장기렌트 리스 전문">
+    <meta property="og:description" content="제이오토에서 제공하는 장기렌트 및 리스 서비스. 합리적인 가격과 전문 상담으로 최적의 차량을 찾아보세요.">
+    <meta property="og:image" content="section/j-1.gif">
+    <meta property="og:site_name" content="제이오토">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="제이오토 - 장기렌트 리스 전문">
+    <meta name="twitter:description" content="제이오토에서 제공하는 장기렌트 및 리스 서비스. 합리적인 가격과 전문 상담으로 최적의 차량을 찾아보세요.">
+    <meta name="twitter:image" content="section/j-1.gif">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content-wrapper">
+            <section class="images-section">
+                <div class="image-item clickable-image">
+                    <img src="section/j-1.gif" alt="j-1">
+                </div>
+                
+                <section class="consultation-form">
+                    <h2 class="form-title">온라인 상담</h2>
+                    
+                    <form id="consultationForm">
+                        <div class="form-group">
+                            <label for="name">이름</label>
+                            <input type="text" id="name" name="name" placeholder="이름을 입력하세요." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>휴대폰</label>
+                            <div class="phone-input-group">
+                                <select id="phone1" name="phone1" class="phone-select">
+                                    <option value="010">010</option>
+                                    <option value="011">011</option>
+                                    <option value="016">016</option>
+                                    <option value="017">017</option>
+                                    <option value="018">018</option>
+                                    <option value="019">019</option>
+                                </select>
+                                <span class="phone-separator">-</span>
+                                <input type="text" id="phone2" name="phone2" class="phone-input" maxlength="4" placeholder="연락처" required>
+                                <span class="phone-separator">-</span>
+                                <input type="text" id="phone3" name="phone3" class="phone-input" maxlength="4" placeholder="연락처" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="carName">차량명</label>
+                            <input type="text" id="carName" name="carName" placeholder="차량명을 입력하세요.">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>렌트/리스</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="rentType" value="렌트" checked>
+                                    <span>렌트</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="rentType" value="리스">
+                                    <span>리스</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>개월수</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="months" value="36개월">
+                                    <span>36개월</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="months" value="48개월" checked>
+                                    <span>48개월</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="months" value="60개월">
+                                    <span>60개월</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>사업자구분</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="businessType" value="개인" checked>
+                                    <span>개인</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="businessType" value="개인사업자">
+                                    <span>개인사업자</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="businessType" value="법인사업자">
+                                    <span>법인사업자</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group privacy-group">
+                            <label class="privacy-label">
+                                <input type="checkbox" id="privacyAgree" required>
+                                <span><a href="#" class="privacy-link" id="privacyModalBtn">개인정보취급방침</a> 자세히보기</span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">신청하기</button>
+                    </form>
+                </section>
+                
+                <div class="image-item clickable-image">
+                    <img src="section/j-2.gif" alt="j-2">
+                </div>
+                
+                <div class="image-item clickable-image">
+                    <img src="section/j-3.png" alt="j-3">
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 플로팅 버튼 -->
+    <div class="floating-buttons">
+        <button class="floating-btn top-btn" id="topBtn" title="맨 위로">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" fill="currentColor"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 모바일 하단 고정 배너 -->
+    <div class="mobile-bottom-banner" id="mobileBanner">
+        <button class="mobile-consult-btn" id="mobileConsultBtn">
+            <span>바로 문의하기 💬</span>
+        </button>
+    </div>
+
+    <!-- 개인정보 취급방침 모달 -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>개인정보 취급방침</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>개인정보취급방침은 다음과 같은 내용을 담고 있습니다.</p>
+                
+                <div class="privacy-section">
+                    <h4>가. 수집하는 개인정보 항목 및 수집방법</h4>
+                    <ul>
+                        <li>신청자 이름, 핸드폰</li>
+                    </ul>
+                </div>
+                
+                <div class="privacy-section">
+                    <h4>나. 개인정보의 수집 및 이용목적</h4>
+                    <p>수집한 개인정보를 다음의 목적을 위해 활용합니다.</p>
+                    <ul>
+                        <li>담당자들의 전화 상담</li>
+                    </ul>
+                </div>
+                
+                <div class="privacy-section">
+                    <h4>다. 수집한 개인정보의 보유 및 이용기간</h4>
+                    <ul>
+                        <li>원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-confirm-btn" id="modalConfirm">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 모달 열기
+        document.getElementById('privacyModalBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('privacyModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('privacyModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalConfirm').addEventListener('click', closeModal);
+
+        // 모달 배경 클릭 시 닫기
+        document.getElementById('privacyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 이미지 클릭 시 문의폼으로 스크롤
+        const clickableImages = document.querySelectorAll('.clickable-image');
+        const consultationForm = document.querySelector('.consultation-form');
+
+        clickableImages.forEach(function(imageItem) {
+            imageItem.style.cursor = 'pointer';
+            imageItem.addEventListener('click', function() {
+                consultationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // TOP 버튼
+        const topBtn = document.getElementById('topBtn');
+        
+        // 스크롤 시 TOP 버튼 표시/숨김
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                topBtn.style.opacity = '1';
+                topBtn.style.visibility = 'visible';
+            } else {
+                topBtn.style.opacity = '0';
+                topBtn.style.visibility = 'hidden';
+            }
+        });
+
+        // TOP 버튼 클릭 시 맨 위로 스크롤
+        topBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 모바일 하단 배너 클릭 시 문의폼으로 스크롤
+        const mobileConsultBtn = document.getElementById('mobileConsultBtn');
+        if (mobileConsultBtn) {
+            mobileConsultBtn.addEventListener('click', function() {
+                consultationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+    </script>
+</body>
+</html>
