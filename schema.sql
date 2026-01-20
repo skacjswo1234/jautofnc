@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS inquiries (
     phone2 TEXT NOT NULL,
     phone3 TEXT NOT NULL,
     car_name TEXT,
-    rent_type TEXT NOT NULL,
+    rent_type TEXT NOT NULL, 
     months TEXT NOT NULL,
     business_type TEXT NOT NULL,
     created_at DATETIME DEFAULT (datetime('now', '+9 hours')),
