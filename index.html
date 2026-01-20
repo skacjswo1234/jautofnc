@@ -257,6 +257,56 @@
                 consultationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         }
+
+        // 문의 폼 제출
+        const consultationFormEl = document.getElementById('consultationForm');
+        consultationFormEl.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = consultationFormEl.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            
+            // 폼 데이터 수집
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                phone1: document.getElementById('phone1').value,
+                phone2: document.getElementById('phone2').value.trim(),
+                phone3: document.getElementById('phone3').value.trim(),
+                car_name: document.getElementById('carName').value.trim() || null,
+                rent_type: consultationFormEl.querySelector('input[name="rentType"]:checked').value,
+                months: consultationFormEl.querySelector('input[name="months"]:checked').value,
+                business_type: consultationFormEl.querySelector('input[name="businessType"]:checked').value
+            };
+            
+            // 버튼 비활성화
+            submitBtn.disabled = true;
+            submitBtn.textContent = '처리 중...';
+            
+            try {
+                const response = await fetch('/api/inquiries', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('문의가 성공적으로 접수되었습니다.');
+                    consultationFormEl.reset();
+                } else {
+                    alert('문의 접수에 실패했습니다: ' + (result.error || '알 수 없는 오류'));
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert('문의 접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
     </script>
 </body>
 </html>
