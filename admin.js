@@ -20,6 +20,10 @@ const pagination = document.getElementById('pagination');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
+const detailModal = document.getElementById('detailModal');
+const detailModalBody = document.getElementById('detailModalBody');
+const detailModalClose = document.getElementById('detailModalClose');
+const detailModalCloseBtn = document.getElementById('detailModalCloseBtn');
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
@@ -75,6 +79,33 @@ function initEventListeners() {
             if (confirm('로그아웃 하시겠습니까?')) {
                 localStorage.removeItem('admin_logged_in');
                 window.location.href = '/login.html';
+            }
+        });
+    }
+
+    // 상세 모달 닫기
+    if (detailModalClose) {
+        detailModalClose.addEventListener('click', closeDetailModal);
+    }
+    if (detailModalCloseBtn) {
+        detailModalCloseBtn.addEventListener('click', closeDetailModal);
+    }
+    if (detailModal) {
+        detailModal.addEventListener('click', (event) => {
+            if (event.target === detailModal) {
+                closeDetailModal();
+            }
+        });
+    }
+
+    // 상세 버튼 이벤트 (이벤트 위임)
+    if (inquiriesList) {
+        inquiriesList.addEventListener('click', (event) => {
+            const target = event.target.closest('.detail-btn');
+            if (!target) return;
+            const id = parseInt(target.dataset.id, 10);
+            if (!Number.isNaN(id)) {
+                openDetailModal(id);
             }
         });
     }
@@ -193,6 +224,7 @@ function displayInquiries(inquiries) {
             </td>
             <td data-label="관리">
                 <div class="table-actions-modern">
+                    <button class="detail-btn" data-id="${inquiry.id}" title="상세보기">상세정보</button>
                     <button class="delete-btn-modern" onclick="deleteInquiry(${inquiry.id})" title="삭제">삭제</button>
                 </div>
             </td>
@@ -203,6 +235,79 @@ function displayInquiries(inquiries) {
     
     // 메모 편집 모달 추가
     addMemoModals(inquiries);
+}
+
+// 상세 모달 열기
+function openDetailModal(id) {
+    if (!detailModal || !detailModalBody) return;
+    const inquiry = allInquiries.find(item => item.id === id);
+    if (!inquiry) return;
+
+    detailModalBody.innerHTML = `
+        <div class="detail-row">
+            <span class="detail-label">번호</span>
+            <span class="detail-value">${escapeHtml(String(inquiry.id))}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">이름</span>
+            <span class="detail-value">${escapeHtml(inquiry.name)}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">연락처</span>
+            <span class="detail-value">${escapeHtml(inquiry.phone1)}-${escapeHtml(inquiry.phone2)}-${escapeHtml(inquiry.phone3)}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">차량명</span>
+            <span class="detail-value">${escapeHtml(inquiry.car_name || '-')}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">렌트/리스</span>
+            <span class="detail-value">${escapeHtml(inquiry.rent_type)}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">개월수</span>
+            <span class="detail-value">${escapeHtml(inquiry.months)}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">사업자구분</span>
+            <span class="detail-value">${escapeHtml(inquiry.business_type)}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">등록일시</span>
+            <span class="detail-value">${formatDate(inquiry.created_at)}</span>
+        </div>
+        <div class="detail-row detail-status">
+            <span class="detail-label">상태</span>
+            <div class="status-chips">
+                <button class="status-chip ${inquiry.status === 'pending' ? 'active' : ''} pending" data-status="pending" onclick="updateStatus(${inquiry.id}, 'pending')">대기</button>
+                <button class="status-chip ${inquiry.status === 'contacted' ? 'active' : ''} contacted" data-status="contacted" onclick="updateStatus(${inquiry.id}, 'contacted')">연락</button>
+                <button class="status-chip ${inquiry.status === 'completed' ? 'active' : ''} completed" data-status="completed" onclick="updateStatus(${inquiry.id}, 'completed')">완료</button>
+            </div>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">메모</span>
+            <div class="detail-value detail-memo">
+                <div class="detail-memo-text">${escapeHtml(inquiry.memo || '메모 없음')}</div>
+                <button class="detail-memo-btn" onclick="toggleMemoEdit(${inquiry.id})">메모 편집</button>
+            </div>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">관리</span>
+            <div class="detail-value">
+                <button class="detail-delete-btn" onclick="deleteInquiry(${inquiry.id})">삭제</button>
+            </div>
+        </div>
+    `;
+
+    detailModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// 상세 모달 닫기
+function closeDetailModal() {
+    if (!detailModal) return;
+    detailModal.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 // 메모 편집 모달 추가

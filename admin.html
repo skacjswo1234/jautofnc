@@ -86,6 +86,20 @@
         </main>
     </div>
 
+    <!-- 모바일 상세 모달 -->
+    <div class="detail-modal" id="detailModal">
+        <div class="detail-modal-content">
+            <div class="detail-modal-header">
+                <h3>문의 상세</h3>
+                <button class="detail-modal-close" id="detailModalClose" aria-label="닫기">&times;</button>
+            </div>
+            <div class="detail-modal-body" id="detailModalBody"></div>
+            <div class="detail-modal-footer">
+                <button class="detail-close-btn" id="detailModalCloseBtn">닫기</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 로그인 체크
         if (!localStorage.getItem('admin_logged_in')) {
