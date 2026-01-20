@@ -251,69 +251,6 @@ function addMemoModals(inquiries) {
         document.body.appendChild(modal);
     });
 }
-        <div class="inquiry-card" data-id="${inquiry.id}" data-original-memo="${escapeHtml(inquiry.memo || '')}">
-            <div class="inquiry-header">
-                <div class="inquiry-info">
-                    <div class="inquiry-name">${escapeHtml(inquiry.name)}</div>
-                    <div class="inquiry-phone">${escapeHtml(inquiry.phone1)}-${escapeHtml(inquiry.phone2)}-${escapeHtml(inquiry.phone3)}</div>
-                </div>
-                <div class="inquiry-status ${inquiry.status}">
-                    ${getStatusText(inquiry.status)}
-                </div>
-            </div>
-            <div class="inquiry-details">
-                <div class="detail-item">
-                    <span class="detail-label">차량명</span>
-                    <span class="detail-value">${escapeHtml(inquiry.car_name || '-')}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">렌트/리스</span>
-                    <span class="detail-value">${escapeHtml(inquiry.rent_type)}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">개월수</span>
-                    <span class="detail-value">${escapeHtml(inquiry.months)}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">사업자구분</span>
-                    <span class="detail-value">${escapeHtml(inquiry.business_type)}</span>
-                </div>
-            </div>
-            <div class="inquiry-memo">
-                <div class="memo-label">
-                    <span>메모</span>
-                    <button class="memo-edit-btn" onclick="toggleMemoEdit(${inquiry.id})" data-id="${inquiry.id}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div class="memo-display" id="memo-display-${inquiry.id}">
-                    ${inquiry.memo ? escapeHtml(inquiry.memo).replace(/\n/g, '<br>') : '<span class="memo-placeholder">메모를 입력하세요.</span>'}
-                </div>
-                <div class="memo-edit" id="memo-edit-${inquiry.id}" style="display: none;">
-                    <textarea class="memo-textarea" id="memo-textarea-${inquiry.id}" placeholder="메모를 입력하세요.">${escapeHtml(inquiry.memo || '')}</textarea>
-                    <div class="memo-actions">
-                        <button class="memo-save-btn" onclick="saveMemo(${inquiry.id})">저장</button>
-                        <button class="memo-cancel-btn" onclick="cancelMemoEdit(${inquiry.id})">취소</button>
-                    </div>
-                </div>
-            </div>
-            <div class="inquiry-footer">
-                <div class="inquiry-date">${formatDate(inquiry.created_at)}</div>
-                <div class="inquiry-actions">
-                    <select class="status-select action-btn status-btn" onchange="updateStatus(${inquiry.id}, this.value)">
-                        <option value="pending" ${inquiry.status === 'pending' ? 'selected' : ''}>대기중</option>
-                        <option value="contacted" ${inquiry.status === 'contacted' ? 'selected' : ''}>연락완료</option>
-                        <option value="completed" ${inquiry.status === 'completed' ? 'selected' : ''}>처리완료</option>
-                    </select>
-                    <button class="action-btn delete-btn" onclick="deleteInquiry(${inquiry.id})">삭제</button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
 
 // 상태 텍스트 변환
 function getStatusText(status) {
