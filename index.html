@@ -10,6 +10,13 @@
 
       gtag('config', 'AW-17607063016');
     </script>
+    <!-- Danggeun Market Code -->
+    <script src="https://karrot-pixel.business.daangn.com/karrot-pixel.js"></script>
+    <script>
+      window.karrotPixel.init('1769047232502158001');
+      window.karrotPixel.track('ViewPage');
+    </script>
+    <!-- End Danggeun Market Code -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>제이오토 - 장기렌트 리스 전문</title>
@@ -323,6 +330,10 @@
                 
                 if (result.success) {
                     consultationFormEl.reset();
+                    // Danggeun Market Code - 서비스 신청 완료
+                    if (window.karrotPixel) {
+                        window.karrotPixel.track('SubmitApplication');
+                    }
                     showSuccessModal();
                 } else {
                     alert('문의 접수에 실패했습니다: ' + (result.error || '알 수 없는 오류'));
@@ -348,6 +359,10 @@
             const successModal = document.getElementById('successModal');
             successModal.style.display = 'none';
             document.body.style.overflow = 'auto';
+            // Danggeun Market Code - 잠재고객(리드) 추적
+            if (window.karrotPixel) {
+                window.karrotPixel.track('Lead');
+            }
         }
 
         // 신청 완료 모달 확인 버튼
