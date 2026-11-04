@@ -10,6 +10,32 @@
       gtag('config', 'AW-17607080242');
       console.log('[Google Tag] 설정 완료 · ID: AW-17607080242', { dataLayer: window.dataLayer });
     </script>
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1631166548784077');
+      fbq('track', 'PageView');
+
+      // 견적 신청이 정상 완료된 경우에만 Lead 1회 전송 (새로고침/직접 접속 시 중복 방지)
+      try {
+        if (sessionStorage.getItem('metaLeadPending') === '1') {
+          sessionStorage.removeItem('metaLeadPending');
+          fbq('track', 'Lead');
+          console.log('[Meta Pixel] Lead 이벤트 전송 · ID: 1631166548784077');
+        }
+      } catch (storageError) {}
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1631166548784077&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>신청 완료 - 제이오토</title>
