@@ -316,7 +316,7 @@
                     if (window.karrotPixel) {
                         window.karrotPixel.track('SubmitApplication');
                     }
-                    // Google Ads 전환 이벤트 - fin_상담신청완료 (DB 저장 성공 시 1회만 실행)
+                    // Google Ads 전환 이벤트 - 차량상담신청 (DB 저장 성공 시 1회만 실행)
                     // 페이지 이동 전에 전송이 끝나도록 event_callback 사용 (1초 안전 타임아웃)
                     let redirected = false;
                     const goComplete = function() {
@@ -326,7 +326,9 @@
                     };
                     if (typeof gtag === 'function') {
                         gtag('event', 'conversion', {
-                            'send_to': 'AW-17607080242/aAVcCK267rYdELLy2stB',
+                            'send_to': 'AW-17607080242/3y_CKKdOrIbELIy2stB',
+                            'value': 1.0,
+                            'currency': 'KRW',
                             'event_callback': goComplete
                         });
                         setTimeout(goComplete, 1000);
